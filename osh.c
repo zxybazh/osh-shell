@@ -135,7 +135,33 @@ int main(void) {
 		history_count ++;
 		memcpy(history[history_count% 10], buffer, MAX_LINE + 1);
 
-		printf("%s\n", args[0]);
+		//printf("%s\n", args[0]);
+		//here to implement the new order
+
+		int background = 0;
+		if (strcmp(args[args_num-1], "&") == 0) {
+			background = 1;
+			args[--args_num] = NULL;
+		}
+
+		pid_t pid = fork();
+		if (pid < 0) {
+			invoke_error("Fork process error");
+			return 1;
+		}
+
+		int status;
+
+		if (pid == 0) {
+			execvp(args[0], args);
+			return 0;
+		} else {
+			if (background) {
+				printf("pid #%d running in background %s\n", pid, buffer);
+			} else {
+				wait(&status);
+			}
+		}
 
 
 		/**
