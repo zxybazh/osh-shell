@@ -153,7 +153,10 @@ int main(void) {
 		int status;
 
 		if (pid == 0) {
-			execvp(args[0], args);
+			status = execvp(args[0], args);
+			if (status == -1) {
+				invoke_error("Fail to execute the command");
+			}
 			return 0;
 		} else {
 			if (background) {
